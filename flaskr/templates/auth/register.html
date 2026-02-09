@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Register</title>
+{% endblock %}
+
+{% block body %}
+<div id="main-div">
+    <div id="left-div">
+        <p>HUNT THE WUMPUS</p>
+        <div id="wumpus">
+
+        </div>
+    </div>
+    <div id="right-div">
+        <form method="post">
+            <h1>Register</h1>
+            <label for="username">Username</label>
+            <input id="username" name="username" placeholder="Enter your username" required/>
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" placeholder="Enter your password" required/>
+            <label for="confirm-password">Confirm password</label>
+            <input id="confirm-password" name="confirm-password" type="password" placeholder="Enter your password again" required/>
+            <p id="form-error"></p>
+            <button type="submit">Register</button>
+            <a href="/login">Already registered ? Login here</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
