@@ -11,10 +11,3 @@ def db_connect():
                                 port=current_app.config.get("DB_PORT"))
 
     return g.db
-
-
-def db_close():
-    db = g.pop('db', None)
-
-    if db is not None:
-        db.close()
