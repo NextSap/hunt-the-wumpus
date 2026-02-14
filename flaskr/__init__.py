@@ -41,7 +41,7 @@ def create_app():
 
             connection.close()
 
-            if row is None or check_password_hash(row[2], password_input):
+            if row is None or not check_password_hash(row[2], password_input):
                 return render_template("auth/login.html", login_error="Invalid credentials")
             else:
                 session["username"] = row[1]
@@ -101,6 +101,6 @@ def create_app():
 
     @app.route("/game")
     def game():
-        return render_template("game.html", username=session.get("username"))
+        return render_template("game.html")
 
     return app
