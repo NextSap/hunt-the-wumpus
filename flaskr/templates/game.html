@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
 
-{% block head %}
-<title>Title</title>
+{% block title %}
+Game
 {% endblock %}
 
-{% block body %}
-<table></table>
+{% block content %}
+<p>{{username}}</p>
+<table></table> <!-- TODO: give game_map to generate a table with tr td and give a css class for each depending on what must be rendered -->
 {% endblock %}

@@ -1,27 +1,44 @@
 {% extends 'base.html' %}
 
-{% block head %}
-<title>Register</title>
+{% block title %}
+Register
 {% endblock %}
 
-{% block body %}
+{% block content %}
 <div id="main-div">
     <div id="left-div">
         <p>HUNT THE WUMPUS</p>
-        <div id="wumpus">
-
-        </div>
+        <img src="{{ url_for('static', filename='images/wumpus.png') }}"
+             alt="Wumpus"
+             height="200"
+             width="200"/>
     </div>
     <div id="right-div">
-        <form method="post">
+        <form id="form" method="post">
             <h1>Register</h1>
             <label for="username">Username</label>
-            <input id="username" name="username" placeholder="Enter your username" required/>
+            <input id="username"
+                   name="username"
+                   placeholder="Enter your username"
+                   type="email"
+                   required/>
+            <small>Use an email address</small>
             <label for="password">Password</label>
-            <input id="password" name="password" type="password" placeholder="Enter your password" required/>
-            <label for="confirm-password">Confirm password</label>
-            <input id="confirm-password" name="confirm-password" type="password" placeholder="Enter your password again" required/>
-            <p id="form-error"></p>
+            <input id="password"
+                   name="password"
+                   type="password"
+                   placeholder="Enter your password"
+                   pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,50}$"
+                   title="Use at least 8 characters, 1 uppercase, 1 lowercase, 1 special character"
+                   required/>
+            <small>Use at least 8 characters, 1 uppercase, 1 lowercase, 1 special character</small>
+            <label for="confirm_password">Confirm password</label>
+            <input id="confirm_password"
+                   name="confirm_password"
+                   type="password"
+                   placeholder="Enter your password again"
+                   required/>
+            <p id="form_error">{{register_error}}</p>
             <button type="submit">Register</button>
             <a href="/login">Already registered ? Login here</a>
         </form>
