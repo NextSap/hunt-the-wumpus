@@ -1,4 +1,4 @@
-import os
+#! /usr/bin/env python3
 
 from flask import Flask, redirect, render_template, request, session
 from markupsafe import escape
@@ -7,14 +7,10 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from db import db_connect
 
-
 # DI ILIO LOUIS
 
 app = Flask(__name__)
 app.config.from_pyfile("config.py")
-
-# ensure the instance folder exists
-os.makedirs(app.instance_path, exist_ok=True)
 
 
 @app.route("/")
@@ -25,7 +21,7 @@ def index():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if session.get("username", -1) != -1:
-        return redirect("/game")
+        return redirect("/menu")
 
     if request.method == "POST":
         username_input = escape(request.form.get("username", None)).strip().lower()
@@ -48,7 +44,7 @@ def login():
             return render_template("auth/login.html", login_error="Invalid credentials")
         else:
             session["username"] = row[1]
-            return redirect("/game")
+            return redirect("/menu")
 
     else:
         return render_template("auth/login.html")
@@ -94,7 +90,7 @@ def register():
 
             session["username"] = username_input
 
-            return redirect("/game")
+            return redirect("/menu")
     else:
         return render_template("auth/register.html")
 
@@ -108,3 +104,8 @@ def logout():
 @app.route("/game")
 def game():
     return render_template("game.html")
+
+
+@app.route("/menu")
+def menu():
+    return render_template("menu.html")

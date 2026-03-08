@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Menu
+{% endblock %}
+
+{% block content %}
+<div id="menu-div">
+    <h1>HUNT THE WUMPUS</h1>
+    <img src="{{ url_for('static', filename='images/wumpuseyes.png') }}"
+         height="100"
+         alt="Wumpus' eyes"/>
+    <div>
+        <a>NEW GAME</a>
+        <a href="/logout">LOG OUT</a>
+    </div>
+</div>
+{% endblock %}
