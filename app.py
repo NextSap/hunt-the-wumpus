@@ -1,13 +1,13 @@
 #! /usr/bin/env python3
 
+# DI ILIO LOUIS
+
 from flask import Flask, redirect, render_template, request, session
 from markupsafe import escape
 
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from db import db_connect
-
-# DI ILIO LOUIS
 
 app = Flask(__name__)
 app.config.from_pyfile("config.py")
@@ -44,8 +44,9 @@ def login():
             return render_template("auth/login.html", login_error="Invalid credentials")
         else:
             session["username"] = row[1]
-            return redirect("/menu")
+            session["game_state"] = "MENU1"
 
+            return redirect("/menu")
     else:
         return render_template("auth/login.html")
 
@@ -103,9 +104,98 @@ def logout():
 
 @app.route("/game")
 def game():
+    if session.get("username", -1) == -1:
+        return redirect("/login")
+
+    if session.get("game_state") != "PLAYING":
+        return redirect("/menu")
+
+    """
+    0 : Roombase
+    1 : Roomblood
+    2 : Roomslime
+    3 : Roomnasty
+    4 : Roompit
+    5 : Corridor1 (LU - RD)
+    6 : Corridor2 (LD - RU)
+    """
+    session["game_map_structure"] = [
+        [0, 1, 2, 3, 4, 5, 6, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+    ]
+
+    session["game_map_visibility"] = [
+        [1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1],
+    ]
+
+    session["player"] = (0, 5)
+    session["wumpus"] = (2, 2)
+    session["bat"] = [(0, 0), (4, 4)]
+
     return render_template("game.html")
 
 
 @app.route("/menu")
 def menu():
-    return render_template("menu.html")
+    if session.get("username", -1) != -1:
+        game_state = session.get("game_state", "MENU1")
+
+        menu_steps = {
+            "MENU1": ["NEW_GAME", "RANKING", "LOG_OUT"],
+            "MENU2": ["BACK", "EASY", "MEDIUM", 'HARD'],
+            "MENU3": ["BACK", "EXPRESS", "BLINDFOLD", "START_PLAYING"],
+        }
+
+        return render_template("menu.html", options=menu_steps.get(game_state))
+    return redirect("/login")
+
+
+@app.route("/menu-handler", methods=["POST"])
+def menu_handler():
+    choice = request.form.get("choice")
+
+    if choice == "NEW_GAME":
+        session["game_state"] = "MENU2"
+
+    elif choice == "RANKING":
+        return redirect("/ranking")
+
+    elif choice == "LOG_OUT":
+        return redirect("/logout")
+
+    elif choice in ["EASY", "MEDIUM", "HARD"]:
+        session["difficulty"] = choice
+        session["game_state"] = "MENU3"
+
+    elif choice == "BACK":
+        current_state = session.get("game_state", "MENU1")
+        session["game_state"] = f"MENU{int(current_state[-1]) - 1}"
+
+    elif choice == "TOGGLE_EXPRESS":
+        session["express"] = not session.get("express", False)
+
+    elif choice == "TOGGLE_BLINDFOLD":
+        session["blindfold"] = not session.get("blindfold", False)
+
+    elif choice == "START_PLAYING":
+        session["game_state"] = "PLAYING"
+        return redirect("/game")
+
+    return redirect("/menu")
+
+
+@app.route("/ranking")
+def ranking():
+    if session.get("username", -1) == -1:
+        return redirect("/login")
+
+    return render_template("ranking.html")

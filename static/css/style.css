@@ -1,7 +1,8 @@
 @font-face {
-  font-family: MetalMania; /* set name */
-  src: url("../font/MetalMania-Regular.ttf"); /* url of the font */
+    font-family: MetalMania; /* set name */
+    src: url("../font/MetalMania-Regular.ttf"); /* url of the font */
 }
+
 body {
     margin: 0;
     padding: 0;
@@ -89,7 +90,6 @@ a {
     margin-top: 20px;
     text-align: center;
     text-decoration: none;
-    color: white;
     font-size: 12px;
     color: #935a24;
 }
@@ -113,8 +113,10 @@ li {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 384px;
-    width: 512px;
+    /*    height: 384px; */
+    /*    width: 512px; */
+    height: 450px;
+    width: 600px;
     background: #000;
     gap: 15px;
     font-family: MetalMania, serif;
@@ -123,7 +125,7 @@ li {
     font-size: 20px;
 }
 
-#menu-div div {
+#menu-div form {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -131,13 +133,99 @@ li {
     gap: 10px;
 }
 
-#menu-div a {
+#menu-div button {
     color: #b63103;
     text-decoration: none;
     font-size: 30px;
+    background: none;
+    border: none;
+    font-family: MetalMania, serif;
+    letter-spacing: 2px;
 }
 
-#menu-div a:hover {
+#menu-div button:hover {
     color: #2ed5ff;
     cursor: pointer;
+}
+
+#game-div {
+    z-index: 0;
+}
+
+.m-0 {
+    background-image: url("../assets/roombase.png");
+}
+
+.m-1 {
+    background-image: url("../assets/roomblood.png");
+}
+
+.m-2 {
+    background-image: url("../assets/roomslime.png");
+}
+
+.m-3 {
+    background-image: url("../assets/roomnasty.png");
+}
+
+.m-4 {
+    background-image: url("../assets/roompit.png");
+}
+
+.m-5 {
+    background-image: url("../assets/corridor1.png");
+}
+
+.m-6 {
+    background-image: url("../assets/corridor2.png");
+}
+
+.wumpus {
+    background-image: url("../assets/wumpus.png");
+}
+
+.player {
+    background-image: url("../assets/player.png");
+}
+
+.left-up {
+    background-position: -10px -10px;
+}
+
+.right-up {
+    background-position: 10px -10px;
+}
+
+.left-down {
+    background-position: -10px 10px;
+}
+
+.right-down {
+    background-position: 10px 10px;
+}
+
+.bat {
+    background-image: url("../assets/bat.png");
+}
+
+td {
+    height: 64px;
+    width: 64px;
+    border: red solid 1px;
+}
+
+td a {
+    margin: 0;
+    display: block;
+    height: 100%;
+    width: 100%;
+    z-index: 100;
+}
+
+.hide {
+    opacity: 0;
+}
+
+.show {
+    opacity: 1;
 }

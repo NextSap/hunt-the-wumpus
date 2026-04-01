@@ -5,6 +5,29 @@ Game
 {% endblock %}
 
 {% block content %}
-<p>{{session.username}}</p>
-<table></table> <!-- TODO: give game_map to generate a table with tr td and give a css class for each depending on what must be rendered -->
+<div id="game-div">
+    <table>
+        {% for y in range(0, 6) %}
+            <tr>
+                {% for x in range(0, 8) %}
+                    <td class="m-{{session['game_map_structure'][y][x]}} {{'show' if session['game_map_visibility'][y][x] == 1 else 'hide'}}">
+                        {% if y==session['player'][0] and x==session['player'][1] %}
+                            <a class="player"></a>
+                        {% endif %}
+                        {% if y==session['wumpus'][0] and x==session['wumpus'][1] %}
+                            <a class="wumpus"></a>
+                        {% endif %}
+                        {% for bat in session['bat'] %}
+                            {% if y==bat[0] and x==bat[1] %}
+                                <a class="bat"></a>
+                            {% endif %}
+                        {% endfor %}
+
+
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+</div>
 {% endblock %}

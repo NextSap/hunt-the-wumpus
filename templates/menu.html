@@ -10,9 +10,22 @@ Menu
     <img src="{{ url_for('static', filename='images/wumpuseyes.png') }}"
          height="100"
          alt="Wumpus' eyes"/>
-    <div>
-        <a>NEW GAME</a>
-        <a href="/logout">LOG OUT</a>
-    </div>
+    <form method="POST" action="/menu-handler">
+        {% for option in options %}
+            {% if option == 'EXPRESS' %}
+                <button type="submit" name="choice" value="TOGGLE_EXPRESS">
+                    EXPRESS : {{ 'ON' if session.get('express') else 'OFF' }}
+                </button>
+            {% elif option == 'BLINDFOLD' %}
+                <button type="submit" name="choice" value="TOGGLE_BLINDFOLD">
+                    BLINDFOLD : {{ 'ON' if session.get('blindfold') else 'OFF' }}
+                </button>
+            {% else %}
+                <button type="submit" name="choice" value="{{ option }}">
+                    {{ option | replace('_', ' ') }}
+                </button>
+            {% endif %}
+        {% endfor %}
+    </form>
 </div>
 {% endblock %}
