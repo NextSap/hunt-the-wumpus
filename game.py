@@ -3,6 +3,12 @@ import random
 from flask import session
 
 directions = ["LEFT", "RIGHT", "UP", "DOWN"]
+reverse_directions = {
+        "UP": "DOWN",
+        "LEFT": "RIGHT",
+        "RIGHT": "LEFT",
+        "DOWN": "UP",
+    }
 
 
 def reveal_map():
@@ -218,13 +224,6 @@ def place_player(game_map):
 def get_adjacent_cavern(y, x, game_map, direction):
     """Get the adjacent cavern of a location depending on the direction"""
 
-    reverse = {
-        "UP": "DOWN",
-        "LEFT": "RIGHT",
-        "RIGHT": "LEFT",
-        "DOWN": "UP",
-    }
-
     if direction == "UP":
         y, x = wrap_position(y - 1, x)
     elif direction == "LEFT":
@@ -235,7 +234,7 @@ def get_adjacent_cavern(y, x, game_map, direction):
         y, x = wrap_position(y + 1, x)
 
     while game_map[y][x] not in [0, 1, 2, 3, 4]:
-        new_y, new_x, new_direction = get_corridor_exit(y, x, game_map, reverse[direction])
+        new_y, new_x, new_direction = get_corridor_exit(y, x, game_map, reverse_directions[direction])
 
         direction = new_direction
         y, x = new_y, new_x
@@ -245,18 +244,33 @@ def get_adjacent_cavern(y, x, game_map, direction):
 
 def move_player(direction):
     """Move the player in a direction"""
-    y, x = session["player"]
-    direction = direction.upper()
-    if direction == "LEFT":
-        y, x = wrap_position(y, x - 1)
-    elif direction == "RIGHT":
-        y, x = wrap_position(y, x + 1)
-    elif direction == "DOWN":
-        y, x = wrap_position(y + 1, x)
-    elif direction == "UP":
-        y, x = wrap_position(y - 1, x)
 
-    session["player"] = (y, x)
+    prev_y, prev_x = session["player"]
+    new_y, new_x = prev_y, prev_x
+    entered_by = session.get("entered_by", "")
+    game_map = session["game_map"]
+
+    if direction == "LEFT":
+        new_y, new_x = wrap_position(prev_y, prev_x - 1)
+    elif direction == "RIGHT":
+        new_y, new_x = wrap_position(prev_y, prev_x + 1)
+    elif direction == "DOWN":
+        new_y, new_x = wrap_position(prev_y + 1, prev_x)
+    elif direction == "UP":
+        new_y, new_x = wrap_position(prev_y - 1, prev_x)
+
+    session["entered_by"] = reverse_directions[direction]
+
+    if game_map[prev_y][prev_x] == 5:
+        if (entered_by in ("LEFT","UP") and direction not in ("LEFT", "UP")) or (entered_by in ("RIGHT", "DOWN") and direction not in ("RIGHT", "DOWN")):
+            new_y, new_x = prev_y, prev_x
+            session["entered_by"] = entered_by
+    elif game_map[prev_y][prev_x] == 6:
+        if (entered_by in ("LEFT","DOWN") and direction not in ("LEFT", "DOWN")) or (entered_by in ("RIGHT", "UP") and direction not in ("RIGHT", "UP")):
+            new_y, new_x = prev_y, prev_x
+            session["entered_by"] = entered_by
+
+    session["player"] = (new_y, new_x)
 
 def get_corridor_exit(y, x, game_map, entry):  # TODO: refactor with an object UP: (0, -1) LEFT: (-1, 0), etc...
     """Get the corridor exit as well as the direction to exit the corridor"""

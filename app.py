@@ -153,7 +153,10 @@ def move(direction):
     if session.get("game_state") != "PLAYING":
         return redirect("/menu")
 
-    move_player(direction)
+    direction = direction.upper()
+
+    if direction in ["LEFT", "RIGHT", "UP", "DOWN"]:
+        move_player(direction)
 
     return redirect("/game")
 
