@@ -121,12 +121,12 @@ def game():
     5 : Corridor1 (LU - RD)
     6 : Corridor2 (LD - RU)
     """
-    session["unavailable_locations"] = []
 
     game_map = session.get("game_map", [])
     difficulty = session["difficulty"]
 
     if not game_map:
+        session["unavailable_locations"] = []
         is_playable = False
         while not is_playable:
             game_map = create_map(difficulty)
