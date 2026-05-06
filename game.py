@@ -243,6 +243,21 @@ def get_adjacent_cavern(y, x, game_map, direction):
     return y, x
 
 
+def move_player(direction):
+    """Move the player in a direction"""
+    y, x = session["player"]
+    direction = direction.upper()
+    if direction == "LEFT":
+        y, x = wrap_position(y, x - 1)
+    elif direction == "RIGHT":
+        y, x = wrap_position(y, x + 1)
+    elif direction == "DOWN":
+        y, x = wrap_position(y + 1, x)
+    elif direction == "UP":
+        y, x = wrap_position(y - 1, x)
+
+    session["player"] = (y, x)
+
 def get_corridor_exit(y, x, game_map, entry):  # TODO: refactor with an object UP: (0, -1) LEFT: (-1, 0), etc...
     """Get the corridor exit as well as the direction to exit the corridor"""
 

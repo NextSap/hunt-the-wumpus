@@ -8,7 +8,8 @@ from markupsafe import escape
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from db import db_connect
-from game import create_map, is_map_playable, reveal_map, place_pits, place_wumpus, place_bats, place_player
+from game import create_map, is_map_playable, reveal_map, place_pits, place_wumpus, place_bats, place_player, \
+    move_player
 
 app = Flask(__name__)
 app.config.from_pyfile("config.py")
@@ -120,25 +121,41 @@ def game():
     5 : Corridor1 (LU - RD)
     6 : Corridor2 (LD - RU)
     """
-    game_map = []
-    is_playable = False
+    session["unavailable_locations"] = []
+
+    game_map = session.get("game_map", [])
     difficulty = session["difficulty"]
 
-    while not is_playable:
-        game_map = create_map(difficulty)
-        is_playable = is_map_playable(game_map)
+    if not game_map:
+        is_playable = False
+        while not is_playable:
+            game_map = create_map(difficulty)
+            is_playable = is_map_playable(game_map)
 
-    session["game_map_structure"] = game_map
-    session["unavailable_locations"] = []
+        place_pits(game_map)
+        place_wumpus(game_map)
+        place_bats(game_map, 1 if difficulty == 1 else 2)
+        place_player(game_map)
+
+
+    session["game_map"] = game_map
 
     reveal_map()
 
-    place_pits(game_map)
-    place_wumpus(game_map)
-    place_bats(game_map, 1 if difficulty == 1 else 2)
-    place_player(game_map)
-
     return render_template("game.html")
+
+
+@app.route("/move/<direction>")
+def move(direction):
+    if session.get("username", -1) == -1:
+        return redirect("/login")
+
+    if session.get("game_state") != "PLAYING":
+        return redirect("/menu")
+
+    move_player(direction)
+
+    return redirect("/game")
 
 
 @app.route("/menu")

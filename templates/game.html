@@ -14,7 +14,7 @@ Game
         {% for y in range(0, 6) %}
             <tr>
                 {% for x in range(0, 8) %}
-                    <td class="m-{{session['game_map_structure'][y][x]}} {{'show' if session['game_map_visibility'][y][x] == 1 else 'hide'}}">
+                    <td class="m-{{session['game_map'][y][x]}} {{'show' if session['game_map_visibility'][y][x] == 1 else 'hide'}}">
                         {% if (y, x) == (player[0], player[1]) %}
                             <a class="player"></a>
                         {% endif %}
