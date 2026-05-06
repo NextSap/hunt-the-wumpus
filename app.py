@@ -8,6 +8,7 @@ from markupsafe import escape
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from db import db_connect
+from game import create_map, is_map_playable, reveal_map, place_pits, place_wumpus, place_bats, place_player
 
 app = Flask(__name__)
 app.config.from_pyfile("config.py")
@@ -119,27 +120,23 @@ def game():
     5 : Corridor1 (LU - RD)
     6 : Corridor2 (LD - RU)
     """
-    session["game_map_structure"] = [
-        [0, 1, 2, 3, 4, 5, 6, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-    ]
+    game_map = []
+    is_playable = False
+    difficulty = session["difficulty"]
 
-    session["game_map_visibility"] = [
-        [1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 0, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1],
-    ]
+    while not is_playable:
+        game_map = create_map(difficulty)
+        is_playable = is_map_playable(game_map)
 
-    session["player"] = (0, 5)
-    session["wumpus"] = (2, 2)
-    session["bat"] = [(0, 0), (4, 4)]
+    session["game_map_structure"] = game_map
+    session["unavailable_locations"] = []
+
+    reveal_map()
+
+    place_pits(game_map)
+    place_wumpus(game_map)
+    place_bats(game_map, 1 if difficulty == 1 else 2)
+    place_player(game_map)
 
     return render_template("game.html")
 
@@ -173,7 +170,7 @@ def menu_handler():
         return redirect("/logout")
 
     elif choice in ["EASY", "MEDIUM", "HARD"]:
-        session["difficulty"] = choice
+        session["difficulty"] = 1 if choice == "EASY" else 2 if choice == "MEDIUM" else 3
         session["game_state"] = "MENU3"
 
     elif choice == "BACK":
@@ -199,3 +196,8 @@ def ranking():
         return redirect("/login")
 
     return render_template("ranking.html")
+
+
+@app.route("/debug")
+def debug():
+    return render_template("debug.html")

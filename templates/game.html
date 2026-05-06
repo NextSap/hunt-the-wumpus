@@ -7,23 +7,23 @@ Game
 {% block content %}
 <div id="game-div">
     <table>
+        {% set player = session['player'] %}
+        {% set wumpus = session['wumpus'] %}
+        {% set bat_1 = session['bat_1'] %}
+        {% set bat_2 = session['bat_2'] %}
         {% for y in range(0, 6) %}
             <tr>
                 {% for x in range(0, 8) %}
                     <td class="m-{{session['game_map_structure'][y][x]}} {{'show' if session['game_map_visibility'][y][x] == 1 else 'hide'}}">
-                        {% if y==session['player'][0] and x==session['player'][1] %}
+                        {% if (y, x) == (player[0], player[1]) %}
                             <a class="player"></a>
                         {% endif %}
-                        {% if y==session['wumpus'][0] and x==session['wumpus'][1] %}
+                        {% if (y, x) == (wumpus[0], wumpus[1]) %}
                             <a class="wumpus"></a>
                         {% endif %}
-                        {% for bat in session['bat'] %}
-                            {% if y==bat[0] and x==bat[1] %}
-                                <a class="bat"></a>
-                            {% endif %}
-                        {% endfor %}
-
-
+                        {% if (bat_1 and (y, x) == (bat_1[0][0], bat_1[0][1])) or (bat_2 and (y, x) == (bat_2[0][0], bat_2[0][1])) %}
+                            <a class="bat"></a>
+                        {% endif %}
                     </td>
                 {% endfor %}
             </tr>
