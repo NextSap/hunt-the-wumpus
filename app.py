@@ -8,8 +8,8 @@ from markupsafe import escape
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from db import db_connect
-from game import create_map, is_map_playable, reveal_map, place_pits, place_wumpus, place_bats, place_player, \
-    move_player
+from game import create_map, is_map_playable, place_pits, place_wumpus, place_bats, place_player, \
+    move_player, shoot_arrow
 
 app = Flask(__name__)
 app.config.from_pyfile("config.py")
@@ -109,7 +109,9 @@ def game():
     if session.get("username", -1) == -1:
         return redirect("/login")
 
-    if session.get("game_state") != "PLAYING":
+    game_state = session.get("game_state")
+
+    if game_state not in ("PLAYING", "VICTORY", "DEFEAT"):
         return redirect("/menu")
 
     """
@@ -127,6 +129,14 @@ def game():
 
     if not game_map:
         session["unavailable_locations"] = []
+        session["game_map_visibility"] = [
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+        ]
         is_playable = False
         while not is_playable:
             game_map = create_map(difficulty)
@@ -136,11 +146,7 @@ def game():
         place_wumpus(game_map)
         place_bats(game_map, 1 if difficulty == 1 else 2)
         place_player(game_map)
-
-
-    session["game_map"] = game_map
-
-    reveal_map()
+        session["game_map"] = game_map
 
     return render_template("game.html")
 
@@ -149,6 +155,9 @@ def game():
 def move(direction):
     if session.get("username", -1) == -1:
         return redirect("/login")
+
+    if session.get("game_state") in ("VICTORY", "DEFEAT"):
+        return redirect("/game")
 
     if session.get("game_state") != "PLAYING":
         return redirect("/menu")
@@ -163,17 +172,21 @@ def move(direction):
 
 @app.route("/menu")
 def menu():
-    if session.get("username", -1) != -1:
-        game_state = session.get("game_state", "MENU1")
+    if session.get("username", -1) == -1:
+        return redirect("/login")
 
-        menu_steps = {
-            "MENU1": ["NEW_GAME", "RANKING", "LOG_OUT"],
-            "MENU2": ["BACK", "EASY", "MEDIUM", 'HARD'],
-            "MENU3": ["BACK", "EXPRESS", "BLINDFOLD", "START_PLAYING"],
-        }
+    if session.get("game_state") in ("PLAYING", "VICTORY", "DEFEAT"):
+        return redirect("/game")
 
-        return render_template("menu.html", options=menu_steps.get(game_state))
-    return redirect("/login")
+    game_state = session.get("game_state", "MENU1")
+
+    menu_steps = {
+        "MENU1": ["NEW_GAME", "RANKING", "LOG_OUT"],
+        "MENU2": ["BACK", "EASY", "MEDIUM", 'HARD'],
+        "MENU3": ["BACK", "EXPRESS", "BLINDFOLD", "START_PLAYING"],
+    }
+
+    return render_template("menu.html", options=menu_steps.get(game_state))
 
 
 @app.route("/menu-handler", methods=["POST"])
@@ -221,3 +234,36 @@ def ranking():
 @app.route("/debug")
 def debug():
     return render_template("debug.html")
+
+
+@app.route("/arrow/<direction>")
+def arrow(direction):
+    if session.get("username", -1) == -1:
+        return redirect("/login")
+
+    if session.get("game_state") in ("VICTORY", "DEFEAT"):
+        return redirect("/game")
+
+    if session.get("game_state") != "PLAYING":
+        return redirect("/menu")
+
+    direction = direction.upper()
+
+    if direction in ["LEFT", "RIGHT", "UP", "DOWN"]:
+        shoot_arrow(direction)
+
+    return redirect("/game")
+
+
+@app.route("/back-menu")
+def back_menu():
+    if session.get("username", -1) == -1:
+        return redirect("/login")
+
+    username = session.get("username")
+    session.clear()
+    session["game_state"] = "MENU1"
+    session["username"] = username
+
+    return redirect("/menu")
+

@@ -37,12 +37,16 @@ def create_simple_map_structure():
     ]
 
 
-def reveal(y, x):
+def reveal_location(y, x):
     """Reveal a specific location"""
 
-    game_map_visibility = session.get("game_map_visibility")
-    game_map_visibility[y][x] = 1
-    session["game_map_visibility"] = game_map_visibility
+    session["game_map_visibility"][y][x] = 1
+
+
+def hide_location(y, x):
+    """Hide a specific location"""
+
+    session["game_map_visibility"][y][x] = 0
 
 
 def create_map(difficulty):
@@ -219,6 +223,7 @@ def place_player(game_map):
         y, x = get_random_cavern(game_map)
 
     session["player"] = (y, x)
+    reveal_location(y, x)
 
 
 def get_adjacent_cavern(y, x, game_map, direction):
@@ -272,6 +277,16 @@ def move_player(direction):
 
     session["player"] = (new_y, new_x)
 
+    if session.get("blindfold", False):
+        hide_location(prev_y, prev_x)
+
+    reveal_location(new_y, new_x)
+
+    if (new_y, new_x) in (session["wumpus"], session["pit_1"], session["pit_2"]):
+        session["game_state"] = "DEFEAT"
+        reveal_map()
+
+
 def get_corridor_exit(y, x, game_map, entry):  # TODO: refactor with an object UP: (0, -1) LEFT: (-1, 0), etc...
     """Get the corridor exit as well as the direction to exit the corridor"""
 
@@ -320,3 +335,19 @@ def color_cavern(y, x, game_map, cavern_type):
         game_map[y][x] = cavern_type
     if (current_type == 1 and cavern_type == 2) or (current_type == 2 and cavern_type == 1):
         game_map[y][x] = 3
+
+
+def shoot_arrow(direction):
+    """Shoot the arrow in a specific direction"""
+
+    game_map = session["game_map"]
+    wumpus = session["wumpus"]
+    y, x = session["player"]
+    target = get_adjacent_cavern(y, x, game_map, direction)
+
+    if target == wumpus:
+        session["game_state"] = "VICTORY"
+    else:
+        session["game_state"] = "DEFEAT"
+
+    reveal_map()

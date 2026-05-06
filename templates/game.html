@@ -6,28 +6,63 @@ Game
 
 {% block content %}
 <div id="game-div">
-    <table>
-        {% set player = session['player'] %}
-        {% set wumpus = session['wumpus'] %}
-        {% set bat_1 = session['bat_1'] %}
-        {% set bat_2 = session['bat_2'] %}
-        {% for y in range(0, 6) %}
+    {% set game_state = session['game_state'] %}
+    {% if game_state in ('VICTORY', 'DEFEAT') %}
+    <p class="end-result">{{'You won the game' if game_state == 'VICTORY' else ('You lost the game' if game_state ==
+        'DEFEAT' else '') }}</p>
+    {% endif %}
+    <div>
+        <table class="{{'end' if game_state == 'VICTORY' or game_state == 'DEFEAT' else ''}}">
+            {% set player = session['player'] %}
+            {% set wumpus = session['wumpus'] %}
+            {% set bat_1 = session['bat_1'] %}
+            {% set bat_2 = session['bat_2'] %}
+            {% for y in range(0, 6) %}
             <tr>
                 {% for x in range(0, 8) %}
-                    <td class="m-{{session['game_map'][y][x]}} {{'show' if session['game_map_visibility'][y][x] == 1 else 'hide'}}">
-                        {% if (y, x) == (player[0], player[1]) %}
-                            <a class="player"></a>
-                        {% endif %}
-                        {% if (y, x) == (wumpus[0], wumpus[1]) %}
-                            <a class="wumpus"></a>
-                        {% endif %}
-                        {% if (bat_1 and (y, x) == (bat_1[0][0], bat_1[0][1])) or (bat_2 and (y, x) == (bat_2[0][0], bat_2[0][1])) %}
-                            <a class="bat"></a>
-                        {% endif %}
-                    </td>
+                <td class="m-{{session['game_map'][y][x]}} {{'show' if session['game_map_visibility'][y][x] == 1 else 'hide'}}">
+                    {% if (y, x) == (player[0], player[1]) %}
+                    <a class="player"></a>
+                    {% endif %}
+                    {% if (y, x) == (wumpus[0], wumpus[1]) %}
+                    <a class="wumpus"></a>
+                    {% endif %}
+                    {% if (bat_1 and (y, x) == (bat_1[0][0], bat_1[0][1])) or (bat_2 and (y, x) == (bat_2[0][0],
+                    bat_2[0][1])) %}
+                    <a class="bat"></a>
+                    {% endif %}
+                </td>
                 {% endfor %}
             </tr>
-        {% endfor %}
-    </table>
+            {% endfor %}
+        </table>
+        {% if game_state == 'PLAYING' %}
+        <div id="action-div">
+            <div class="buttons-div">
+                <a class="button" href="/move/up">MOVE UP</a>
+                <div>
+                    <a class="button" href="/move/left">MOVE LEFT</a>
+                    <a class="button" href="/move/right">MOVE RIGHT</a>
+                </div>
+                <a class="button" href="/move/down">MOVE DOWN</a>
+            </div>
+            <div class="buttons-div">
+                <a class="button" href="/arrow/up">ARROW UP</a>
+                <div>
+                    <a class="button" href="/arrow/left">ARROW LEFT</a>
+                    <a class="button" href="/arrow/right">ARROW RIGHT</a>
+                </div>
+                <a class="button" href="/arrow/down">ARROW DOWN</a>
+            </div>
+            {% endif %}
+            {% if game_state in ('VICTORY', 'DEFEAT') %}
+
+            {% endif %}
+            <div class="buttons-div">
+                <a class="button" href="/logout">LOG OUT</a>
+                <a class="button" href="/back-menu">BACK TO MENU</a>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

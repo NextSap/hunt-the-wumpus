@@ -150,6 +150,14 @@ li {
 
 #game-div {
     z-index: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#game-div>div {
+    display: flex;
+    gap: 20px;
 }
 
 .m-0 {
@@ -210,6 +218,10 @@ li {
     transform: scale(1.2);
 }
 
+table {
+    border: 1px solid #EAD8C0;
+}
+
 td {
     height: 64px;
     width: 64px;
@@ -231,4 +243,50 @@ td a {
 
 .show {
     opacity: 1;
+}
+
+.buttons-div {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    gap: 5px;
+}
+
+.buttons-div div {
+    display: flex;
+    width: 100%;
+    gap: 5px;
+}
+
+.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #EAD8C0;
+    color: #3C2A21;
+    text-align: center;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    height: 30px;
+    margin: 0;
+    border: 1px solid #59594b;
+}
+
+.button:hover {
+    text-decoration: none;
+    background-color: #9e9080;
+}
+
+.end-result {
+    font-family: MetalMania, serif;
+    color: #EAD8C0;
+    font-size: 30px;
+    letter-spacing: 8px;
+}
+
+#action-div {
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
 }
