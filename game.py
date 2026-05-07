@@ -4,11 +4,11 @@ from flask import session
 
 directions = ["LEFT", "RIGHT", "UP", "DOWN"]
 reverse_directions = {
-        "UP": "DOWN",
-        "LEFT": "RIGHT",
-        "RIGHT": "LEFT",
-        "DOWN": "UP",
-    }
+    "UP": "DOWN",
+    "LEFT": "RIGHT",
+    "RIGHT": "LEFT",
+    "DOWN": "UP",
+}
 
 
 def reveal_map():
@@ -226,7 +226,7 @@ def place_player(game_map):
     reveal_location(y, x)
 
 
-def get_adjacent_cavern(y, x, game_map, direction):
+def get_adjacent_cavern(y, x, game_map, direction, reveal_path=False):
     """Get the adjacent cavern of a location depending on the direction"""
 
     if direction == "UP":
@@ -239,6 +239,9 @@ def get_adjacent_cavern(y, x, game_map, direction):
         y, x = wrap_position(y + 1, x)
 
     while game_map[y][x] not in [0, 1, 2, 3, 4]:
+        if reveal_path:
+            reveal_location(y, x)
+
         new_y, new_x, new_direction = get_corridor_exit(y, x, game_map, reverse_directions[direction])
 
         direction = new_direction
@@ -254,30 +257,37 @@ def move_player(direction):
     new_y, new_x = prev_y, prev_x
     entered_by = session.get("entered_by", "")
     game_map = session["game_map"]
+    express = session.get("express", False)
+    blindfold = session.get("blindfold", False)
 
-    if direction == "LEFT":
-        new_y, new_x = wrap_position(prev_y, prev_x - 1)
-    elif direction == "RIGHT":
-        new_y, new_x = wrap_position(prev_y, prev_x + 1)
-    elif direction == "DOWN":
-        new_y, new_x = wrap_position(prev_y + 1, prev_x)
-    elif direction == "UP":
-        new_y, new_x = wrap_position(prev_y - 1, prev_x)
+    if express:
+        new_y, new_x = get_adjacent_cavern(prev_y, prev_x, game_map, direction, False if blindfold else True)
+    else:
+        if direction == "LEFT":
+            new_y, new_x = wrap_position(prev_y, prev_x - 1)
+        elif direction == "RIGHT":
+            new_y, new_x = wrap_position(prev_y, prev_x + 1)
+        elif direction == "DOWN":
+            new_y, new_x = wrap_position(prev_y + 1, prev_x)
+        elif direction == "UP":
+            new_y, new_x = wrap_position(prev_y - 1, prev_x)
 
-    session["entered_by"] = reverse_directions[direction]
+        session["entered_by"] = reverse_directions[direction]
 
-    if game_map[prev_y][prev_x] == 5:
-        if (entered_by in ("LEFT","UP") and direction not in ("LEFT", "UP")) or (entered_by in ("RIGHT", "DOWN") and direction not in ("RIGHT", "DOWN")):
-            new_y, new_x = prev_y, prev_x
-            session["entered_by"] = entered_by
-    elif game_map[prev_y][prev_x] == 6:
-        if (entered_by in ("LEFT","DOWN") and direction not in ("LEFT", "DOWN")) or (entered_by in ("RIGHT", "UP") and direction not in ("RIGHT", "UP")):
-            new_y, new_x = prev_y, prev_x
-            session["entered_by"] = entered_by
+        if game_map[prev_y][prev_x] == 5:
+            if (entered_by in ("LEFT", "UP") and direction not in ("LEFT", "UP")) or (
+                    entered_by in ("RIGHT", "DOWN") and direction not in ("RIGHT", "DOWN")):
+                new_y, new_x = prev_y, prev_x
+                session["entered_by"] = entered_by
+        elif game_map[prev_y][prev_x] == 6:
+            if (entered_by in ("LEFT", "DOWN") and direction not in ("LEFT", "DOWN")) or (
+                    entered_by in ("RIGHT", "UP") and direction not in ("RIGHT", "UP")):
+                new_y, new_x = prev_y, prev_x
+                session["entered_by"] = entered_by
 
     session["player"] = (new_y, new_x)
 
-    if session.get("blindfold", False):
+    if blindfold:
         hide_location(prev_y, prev_x)
 
     reveal_location(new_y, new_x)
