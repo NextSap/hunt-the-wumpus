@@ -2,6 +2,8 @@ import random
 
 from flask import session
 
+from db import add_arrow_defeat, add_victory, add_wumpus_defeat, add_pit_defeat
+
 directions = ["LEFT", "RIGHT", "UP", "DOWN"]
 reverse_directions = {
     "UP": "DOWN",
@@ -294,6 +296,10 @@ def move_player(direction):
 
     if (new_y, new_x) in (session["wumpus"], session["pit_1"], session["pit_2"]):
         session["game_state"] = "DEFEAT"
+        if (new_y, new_x) == session["wumpus"]:
+            add_wumpus_defeat(session["username"])
+        else:
+            add_pit_defeat(session["username"])
         reveal_map()
 
 
@@ -357,7 +363,9 @@ def shoot_arrow(direction):
 
     if target == wumpus:
         session["game_state"] = "VICTORY"
+        add_victory(session["username"])
     else:
         session["game_state"] = "DEFEAT"
+        add_arrow_defeat(session["username"])
 
     reveal_map()
