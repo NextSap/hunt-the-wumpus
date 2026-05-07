@@ -32,14 +32,11 @@ def login():
         if username_input is None or password_input is None:
             return render_template("auth/login.html", login_error="Username and/or password are empty")
 
-        row = None
         connection = db_connect()
-
-        with connection:
-            with connection.cursor() as cursor:
-                cursor.execute("SELECT * FROM users WHERE username = %s", (username_input,))
-                row = cursor.fetchone()
-
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM users WHERE username = %s", (username_input,))
+        row = cursor.fetchone()
+        cursor.close()
         connection.close()
 
         if row is None or not check_password_hash(row[2], password_input):
@@ -69,26 +66,22 @@ def register():
         elif password_input != confirm_password_input:
             return render_template("auth/register.html", register_error="Passwords do not match")
 
-        row = None
         connection = db_connect()
-
-        with connection:
-            with connection.cursor() as cursor:
-                cursor.execute("SELECT * FROM users WHERE username = %s", (username_input,))
-                row = cursor.fetchone()
-
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM users WHERE username = %s", (username_input,))
+        row = cursor.fetchone()
+        cursor.close()
         connection.close()
 
         if row is not None:
             return render_template("auth/register.html", register_error="Username already used")
         else:
             connection = db_connect()
-
-            with connection:
-                with connection.cursor() as cursor:
-                    cursor.execute("INSERT INTO users (username,password) VALUES (%s,%s)",
-                                   (username_input, generate_password_hash(password_input)), )
-
+            cursor = connection.cursor()
+            cursor.execute("INSERT INTO users (username,password) VALUES (%s,%s)",
+                           (username_input, generate_password_hash(password_input)), )
+            connection.commit()
+            cursor.close()
             connection.close()
 
             session["username"] = username_input
