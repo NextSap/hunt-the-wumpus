@@ -83,7 +83,7 @@ def get_random_cavern(game_map):
 
 
 def get_corridors_number(difficulty):
-    """Get the number of corridors depending on difficulty"""
+    """Get the number of corridors to create the game map depending on difficulty"""
 
     match difficulty:
         case 1:
@@ -220,8 +220,7 @@ def place_bats(game_map, number_bats):
         while (y, x) in session["unavailable_locations"]:
             y, x = get_random_cavern(game_map)
 
-        session[f"bat_{i + 1}"] = [(y, x),
-                                   False]  # TODO: maybe store trigger state is not needed : check whether the case is revealed or not
+        session[f"bat_{i + 1}"] = [(y, x), False]
         session["unavailable_locations"].append((y, x))
 
 
@@ -269,6 +268,8 @@ def move_player(direction):
     game_map = session["game_map"]
     express = session.get("express", False)
     blindfold = session.get("blindfold", False)
+    bat_1 = session.get("bat_1", [])
+    bat_2 = session.get("bat_2", [])
 
     if express:
         new_y, new_x = get_adjacent_cavern(prev_y, prev_x, game_map, direction, False if blindfold else True)
@@ -309,6 +310,39 @@ def move_player(direction):
         else:
             add_pit_defeat(session["username"])
         reveal_map()
+    """
+
+    if bat_1 and bat_1[0]==(new_y, new_x):
+        if not bat_1[1]:
+            session["bat_1"] = [(new_y, new_x), True]
+        else:
+            session["unavailable_locations"].remove((new_y, new_x))
+            y, x = get_random_cavern(game_map)
+            while (y, x) in session["unavailable_locations"]:
+                y, x = get_random_cavern(game_map)
+            session["bat_1"] = [(y, x), False]
+            session["unavailable_locations"].append((y, x))
+            new_player_y, new_player_x = get_random_cavern(game_map)
+            session["player"] = (new_player_y, new_player_x)
+            reveal_location(new_player_y, new_player_x)
+            if blindfold:
+                hide_location(y, x)
+
+    if bat_2 and bat_2[0]==(new_y, new_x):
+        if not bat_2[1]:
+            session["bat_2"] = [(new_y, new_x), True]
+        else:
+            session["unavailable_locations"].remove((new_y, new_x))
+            y, x = get_random_cavern(game_map)
+            while (y, x) in session["unavailable_locations"]:
+                y, x = get_random_cavern(game_map)
+            session["bat_2"] = [(y, x), False]
+            session["unavailable_locations"].append((y, x))
+            new_player_y, new_player_x = get_random_cavern(game_map)
+            session["player"] = (new_player_y, new_player_x)
+            reveal_location(new_player_y, new_player_x)
+            if blindfold:
+                hide_location(y, x)
 
 
 def get_corridor_exit(y, x, game_map, entry):  # TODO: refactor with an object UP: (0, -1) LEFT: (-1, 0), etc...
