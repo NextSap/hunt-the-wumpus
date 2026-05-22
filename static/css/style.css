@@ -248,6 +248,7 @@ td a {
 .buttons-div {
     display: flex;
     flex-direction: column;
+    align-items: center;
     width: 400px;
     gap: 5px;
 }
@@ -267,7 +268,7 @@ td a {
     text-align: center;
     font-size: 16px;
     cursor: pointer;
-    width: 100%;
+    width: 250px;
     height: 30px;
     margin: 0;
     border: 1px solid #59594b;
@@ -292,10 +293,10 @@ td a {
 }
 
 #ranking-table {
-    width: 85%;                 /* S'adapte bien dans les 600px du conteneur */
-    border-collapse: collapse;  /* Supprime les doubles bordures */
+    width: 85%;
+    border-collapse: collapse;
     margin-top: 10px;
-    font-size: 18px; /* Un poil plus petit que les 20px du menu pour la hiérarchie */
+    font-size: 18px;
     border: none;
 }
 
@@ -305,9 +306,9 @@ td a {
 
 .table-wrapper {
     width: 100%;
-    max-height: 300px;   /* Limite la hauteur pour laisser de la place au titre H1 et aux marges */
-    overflow-y: auto;    /* Active le défilement vertical uniquement si nécessaire */
-    padding-right: 5px;  /* Petit espace pour ne pas coller à la scrollbar */
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 5px;
     display: flex;
     justify-content: center;
 }
