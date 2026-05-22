@@ -4,6 +4,17 @@ from flask import session
 
 from db import add_arrow_defeat, add_victory, add_wumpus_defeat, add_pit_defeat
 
+"""
+Value used to create the game map
+    0 : Roombase
+    1 : Roomblood
+    2 : Roomslime
+    3 : Roomnasty
+    4 : Roompit
+    5 : Corridor1 (LU - RD)
+    6 : Corridor2 (LD - RU)
+"""
+
 directions = ["LEFT", "RIGHT", "UP", "DOWN"]
 reverse_directions = {
     "UP": "DOWN",

@@ -114,16 +114,6 @@ def game():
     if game_state not in ("PLAYING", "VICTORY", "DEFEAT"):
         return redirect("/menu")
 
-    """
-    0 : Roombase
-    1 : Roomblood
-    2 : Roomslime
-    3 : Roomnasty
-    4 : Roompit
-    5 : Corridor1 (LU - RD)
-    6 : Corridor2 (LD - RU)
-    """
-
     game_map = session.get("game_map", [])
     difficulty = session["difficulty"]
 
