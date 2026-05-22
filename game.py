@@ -102,6 +102,7 @@ def get_random_cavern(game_map):
 
 def get_available_random_cavern(game_map):
     """Return an available random cavern location"""
+
     (y, x) = get_random_cavern(game_map)
     while (y, x) in session["unavailable_locations"]:
         y, x = get_random_cavern(game_map)
@@ -132,7 +133,7 @@ def is_map_playable(game_map):
 
         room_type = game_map[y][x]
         if room_type == 0:
-            actual_entry = "CAVERN"  # TODO: refactor variable name
+            actual_entry = "CAVERN"
         elif room_type == 5:
             actual_entry = "corridor1" if entry in ["UP", "LEFT"] else "corridor2"
         elif room_type == 6:
@@ -323,7 +324,7 @@ def move_player(direction):
         move_on_bat(bat_2, 2, game_map, new_y, new_x, blindfold)
 
 
-def get_corridor_exit(y, x, game_map, entry):  # TODO: refactor with an object UP: (0, -1) LEFT: (-1, 0), etc...
+def get_corridor_exit(y, x, game_map, entry):
     """Get the corridor exit as well as the direction to exit the corridor"""
 
     if game_map[y][x] == 5:
@@ -411,6 +412,7 @@ def move_on_bat(bat, bat_id, game_map, new_y, new_x, blindfold):
 
 def check_defeat(new_y, new_x):
     """Check whether the location leads to a defeat. If so it takes in charge the defeat protocol"""
+
     if (new_y, new_x) in (session["wumpus"], session["pit_1"], session["pit_2"]):
         session["game_state"] = "DEFEAT"
         if (new_y, new_x) == session["wumpus"]:
