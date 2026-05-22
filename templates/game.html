@@ -21,14 +21,13 @@ Game
             <tr>
                 {% for x in range(0, 8) %}
                 <td class="m-{{session['game_map'][y][x]}} {{'show' if session['game_map_visibility'][y][x] == 1 else 'hide'}}">
-                    {% if (y, x) == (player[0], player[1]) %}
+                    {% if (y, x) == player %}
                     <a class="player"></a>
                     {% endif %}
-                    {% if (y, x) == (wumpus[0], wumpus[1]) %}
+                    {% if (y, x) == wumpus %}
                     <a class="wumpus"></a>
                     {% endif %}
-                    {% if (bat_1 and (y, x) == (bat_1[0][0], bat_1[0][1])) or (bat_2 and (y, x) == (bat_2[0][0],
-                    bat_2[0][1])) %}
+                    {% if (bat_1 and (y, x) == bat_1[0] and bat_1[1]) or (bat_2 and (y, x) == bat_2[0] and bat_2[1]) %}
                     <a class="bat"></a>
                     {% endif %}
                 </td>
