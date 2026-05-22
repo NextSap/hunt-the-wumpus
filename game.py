@@ -303,8 +303,9 @@ def move_player(direction):
 
     reveal_location(new_y, new_x)
 
+    """
     if (new_y, new_x) in (session["wumpus"], session["pit_1"], session["pit_2"]):
-        session["game_state"] = "DEFEAT"
+        #session["game_state"] = "DEFEAT"
         if (new_y, new_x) == session["wumpus"]:
             add_wumpus_defeat(session["username"])
         else:
