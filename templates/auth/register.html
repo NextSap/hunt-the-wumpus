@@ -20,18 +20,18 @@ Register
             <input id="username"
                    name="username"
                    placeholder="Enter your username"
-                   type="email"
+                   pattern="^[a-zA-Z0-9]+$"
                    required/>
-            <small>Use an email address</small>
+            <small>Use letters and/or numbers only</small>
             <label for="password">Password</label>
             <input id="password"
                    name="password"
                    type="password"
                    placeholder="Enter your password"
-                   pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,50}$"
-                   title="Use at least 8 characters, 1 uppercase, 1 lowercase, 1 special character"
+                   pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,50}$"
+                   title="Use at least 8 characters, 1 uppercase, 1 lowercase"
                    required/>
-            <small>Use at least 8 characters, 1 uppercase, 1 lowercase, 1 special character</small>
+            <small>Use at least 8 characters, 1 uppercase, 1 lowercase</small>
             <label for="confirm_password">Confirm password</label>
             <input id="confirm_password"
                    name="confirm_password"

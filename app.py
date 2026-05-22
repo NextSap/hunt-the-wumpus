@@ -1,6 +1,8 @@
 #! /usr/bin/env python3
 
-# DI ILIO LOUIS
+# DI ILIO LOUIS py02
+
+import re
 
 from flask import Flask, redirect, render_template, request, session
 from markupsafe import escape
@@ -57,7 +59,9 @@ def register():
 
     if request.method == "POST":
         username_input = escape(request.form.get("username", None)).strip().lower()
+        username_exp = '^[a-zA-Z0-9]+$'
         password_input = escape(request.form.get("password", None))
+        password_exp = '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,50}$'
         confirm_password_input = escape(request.form.get("confirm_password", None))
 
         if username_input is None or password_input is None or confirm_password_input is None:
@@ -65,6 +69,9 @@ def register():
                                    register_error="Username and/or password and/or confirm password are empty")
         elif password_input != confirm_password_input:
             return render_template("auth/register.html", register_error="Passwords do not match")
+
+        elif not re.match(password_exp, password_input) or not re.match(username_exp, username_input):
+            return render_template("auth/register.html", register_error="Username and/or Password does not match requirements")
 
         connection = db_connect()
         cursor = connection.cursor()
@@ -223,7 +230,8 @@ def ranking():
 
     connection = db_connect()
     cursor = connection.cursor()
-    cursor.execute("SELECT username, victory, defeat_wumpus, defeat_pit, defeat_arrow FROM users ORDER BY -victory,defeat_wumpus,defeat_pit,defeat_arrow LIMIT 10")
+    cursor.execute(
+        "SELECT username, victory, defeat_wumpus, defeat_pit, defeat_arrow FROM users ORDER BY -victory,defeat_wumpus,defeat_pit,defeat_arrow LIMIT 10")
     row = cursor.fetchall()
     cursor.close()
     connection.close()
@@ -266,4 +274,3 @@ def back_menu():
     session["username"] = username
 
     return redirect("/menu")
-

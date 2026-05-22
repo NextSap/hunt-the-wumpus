@@ -20,18 +20,19 @@ Login
             <input id="username"
                    name="username"
                    placeholder="Enter your username"
-                   type="email"
+                   pattern="^[a-zA-Z0-9]+$"
+                   title="Use letters and/or numbers only"
                    required/>
-            <small>Use an email address</small>
+            <small>Use letters and/or numbers only</small>
             <label for="password">Password</label>
             <input id="password"
                    name="password"
                    type="password"
                    placeholder="Enter your password"
-                   pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,50}$"
-                   title="Use at least 8 characters, 1 uppercase, 1 lowercase, 1 special character"
+                   pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,50}$"
+                   title="Use at least 8 characters and max 50, 1 uppercase, 1 lowercase"
                    required/>
-            <small>Use at least 8 characters, 1 uppercase, 1 lowercase, 1 special character</small>
+            <small>Use at least 8 characters, 1 uppercase, 1 lowercase</small>
             <p id="form_error">{{login_error}}</p>
             <button type="submit">Login</button>
             <a href="/register">Not registered yet ? Create an account</a>
