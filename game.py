@@ -314,15 +314,7 @@ def move_player(direction):
 
     reveal_location(new_y, new_x)
 
-    """
-    if (new_y, new_x) in (session["wumpus"], session["pit_1"], session["pit_2"]):
-        #session["game_state"] = "DEFEAT"
-        if (new_y, new_x) == session["wumpus"]:
-            add_wumpus_defeat(session["username"])
-        else:
-            add_pit_defeat(session["username"])
-        reveal_map()
-    """
+    check_defeat(new_y, new_x)
 
     if bat_1 and bat_1[0] == (new_y, new_x):
         move_on_bat(bat_1, 1, game_map, new_y, new_x, blindfold)
@@ -400,8 +392,8 @@ def shoot_arrow(direction):
 
 
 def move_on_bat(bat, bat_id, game_map, new_y, new_x, blindfold):
-    if not bat[1]:
-        session[f"bat_{bat_id}"] = [(new_y, new_x), True]
+    if not bat[1]: # bat already revealed ?
+        session[f"bat_{bat_id}"] = [(new_y, new_x), True] # reveal the bat
     else:
         session["unavailable_locations"].remove((new_y, new_x))
         y, x = get_available_random_cavern(game_map)
@@ -410,7 +402,19 @@ def move_on_bat(bat, bat_id, game_map, new_y, new_x, blindfold):
 
         new_player_y, new_player_x = get_random_cavern(game_map)
         session["player"] = (new_player_y, new_player_x)
+        check_defeat(new_player_y, new_player_x)
         reveal_location(new_player_y, new_player_x)
 
         if blindfold:
             hide_location(y, x)
+
+
+def check_defeat(new_y, new_x):
+    """Check whether the location leads to a defeat. If so it takes in charge the defeat protocol"""
+    if (new_y, new_x) in (session["wumpus"], session["pit_1"], session["pit_2"]):
+        session["game_state"] = "DEFEAT"
+        if (new_y, new_x) == session["wumpus"]:
+            add_wumpus_defeat(session["username"])
+        else:
+            add_pit_defeat(session["username"])
+        reveal_map()
