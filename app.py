@@ -229,11 +229,6 @@ def ranking():
     return render_template("ranking.html", ranking=row)
 
 
-@app.route("/debug")
-def debug():
-    return render_template("debug.html")
-
-
 @app.route("/arrow/<direction>")
 def arrow(direction):
     if session.get("username", -1) == -1:
