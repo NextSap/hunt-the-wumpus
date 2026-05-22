@@ -28,7 +28,7 @@ def login():
         return redirect("/menu")
 
     if request.method == "POST":
-        username_input = escape(request.form.get("username", None)).strip().lower()
+        username_input = escape(request.form.get("username", None)).strip()
         password_input = escape(request.form.get("password", None))
 
         if username_input is None or password_input is None:
