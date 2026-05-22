@@ -23,6 +23,13 @@ reverse_directions = {
     "DOWN": "UP",
 }
 
+# used to simplify a simple movement to a direction
+move_to = {
+    "UP":    (-1, 0), # add -1 to y, 0 to x
+    "DOWN":  (1, 0), # add 1 to y, 0 to x
+    "LEFT":  (0, -1), # add 0 to y, -1 to x
+    "RIGHT": (0, 1) # add 0 to y, 1 to x
+}
 
 def reveal_map():
     """Reveal the map entirely"""
@@ -249,14 +256,9 @@ def place_player(game_map):
 def get_adjacent_cavern(y, x, game_map, direction, reveal_path=False):
     """Get the adjacent cavern of a location depending on the direction"""
 
-    if direction == "UP":
-        y, x = wrap_position(y - 1, x)
-    elif direction == "LEFT":
-        y, x = wrap_position(y, x - 1)
-    elif direction == "RIGHT":
-        y, x = wrap_position(y, x + 1)
-    elif direction == "DOWN":
-        y, x = wrap_position(y + 1, x)
+    if direction in move_to:
+        dy, dx = move_to[direction]
+        y, x = wrap_position(y + dy, x + dx)
 
     while game_map[y][x] not in [0, 1, 2, 3, 4]:
         if reveal_path:
@@ -285,14 +287,9 @@ def move_player(direction):
     if express:
         new_y, new_x = get_adjacent_cavern(prev_y, prev_x, game_map, direction, False if blindfold else True)
     else:
-        if direction == "LEFT":
-            new_y, new_x = wrap_position(prev_y, prev_x - 1)
-        elif direction == "RIGHT":
-            new_y, new_x = wrap_position(prev_y, prev_x + 1)
-        elif direction == "DOWN":
-            new_y, new_x = wrap_position(prev_y + 1, prev_x)
-        elif direction == "UP":
-            new_y, new_x = wrap_position(prev_y - 1, prev_x)
+        if direction in move_to:
+            dy, dx = move_to[direction]
+            new_y, new_x = wrap_position(prev_y + dy, prev_x + dx)
 
         session["entered_by"] = reverse_directions[direction]
 
