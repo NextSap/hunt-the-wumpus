@@ -100,6 +100,14 @@ def get_random_cavern(game_map):
     return y, x
 
 
+def get_available_random_cavern(game_map):
+    """Return an available random cavern location"""
+    (y, x) = get_random_cavern(game_map)
+    while (y, x) in session["unavailable_locations"]:
+        y, x = get_random_cavern(game_map)
+
+    return y, x
+
 def get_corridors_number(difficulty):
     """Get the number of corridors to create the game map depending on difficulty"""
 
@@ -204,7 +212,7 @@ def place_pits(game_map, number_pits=2):
     """Place a specific amount of pits in a randomly available cavern and color the adjacent caverns"""
 
     for i in range(number_pits):
-        (y, x) = get_random_cavern(game_map)
+        y, x = get_available_random_cavern(game_map)
         session[f"pit_{i + 1}"] = (y, x)
         session["unavailable_locations"].append((y, x))
         game_map[y][x] = 4
@@ -217,7 +225,7 @@ def place_pits(game_map, number_pits=2):
 def place_wumpus(game_map):
     """Place the wumpus in a randomly available cavern and color the adjacent caverns"""
 
-    y, x = get_random_cavern(game_map)
+    y, x = get_available_random_cavern(game_map)
     session["wumpus"] = (y, x)
     session["unavailable_locations"].append((y, x))
 
@@ -234,10 +242,7 @@ def place_bats(game_map, number_bats):
     """Place a specific number of bats in a random available cavern"""
 
     for i in range(number_bats):
-        y, x = get_random_cavern(game_map)
-        while (y, x) in session["unavailable_locations"]:
-            y, x = get_random_cavern(game_map)
-
+        y, x = get_available_random_cavern(game_map)
         session[f"bat_{i + 1}"] = [(y, x), False]
         session["unavailable_locations"].append((y, x))
 
@@ -245,10 +250,7 @@ def place_bats(game_map, number_bats):
 def place_player(game_map):
     """Place a player in a randomly available cavern"""
 
-    y, x = get_random_cavern(game_map)
-    while (y, x) in session["unavailable_locations"]:
-        y, x = get_random_cavern(game_map)
-
+    y, x = get_available_random_cavern(game_map)
     session["player"] = (y, x)
     reveal_location(y, x)
 
