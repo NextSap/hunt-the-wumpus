@@ -325,36 +325,10 @@ def move_player(direction):
     """
 
     if bat_1 and bat_1[0] == (new_y, new_x):
-        if not bat_1[1]:
-            session["bat_1"] = [(new_y, new_x), True]
-        else:
-            session["unavailable_locations"].remove((new_y, new_x))
-            y, x = get_random_cavern(game_map)
-            while (y, x) in session["unavailable_locations"]:
-                y, x = get_random_cavern(game_map)
-            session["bat_1"] = [(y, x), False]
-            session["unavailable_locations"].append((y, x))
-            new_player_y, new_player_x = get_random_cavern(game_map)
-            session["player"] = (new_player_y, new_player_x)
-            reveal_location(new_player_y, new_player_x)
-            if blindfold:
-                hide_location(y, x)
+        move_on_bat(bat_1, 1, game_map, new_y, new_x, blindfold)
 
     if bat_2 and bat_2[0] == (new_y, new_x):
-        if not bat_2[1]:
-            session["bat_2"] = [(new_y, new_x), True]
-        else:
-            session["unavailable_locations"].remove((new_y, new_x))
-            y, x = get_random_cavern(game_map)
-            while (y, x) in session["unavailable_locations"]:
-                y, x = get_random_cavern(game_map)
-            session["bat_2"] = [(y, x), False]
-            session["unavailable_locations"].append((y, x))
-            new_player_y, new_player_x = get_random_cavern(game_map)
-            session["player"] = (new_player_y, new_player_x)
-            reveal_location(new_player_y, new_player_x)
-            if blindfold:
-                hide_location(y, x)
+        move_on_bat(bat_2, 2, game_map, new_y, new_x, blindfold)
 
 
 def get_corridor_exit(y, x, game_map, entry):  # TODO: refactor with an object UP: (0, -1) LEFT: (-1, 0), etc...
@@ -423,3 +397,20 @@ def shoot_arrow(direction):
         add_arrow_defeat(session["username"])
 
     reveal_map()
+
+
+def move_on_bat(bat, bat_id, game_map, new_y, new_x, blindfold):
+    if not bat[1]:
+        session[f"bat_{bat_id}"] = [(new_y, new_x), True]
+    else:
+        session["unavailable_locations"].remove((new_y, new_x))
+        y, x = get_available_random_cavern(game_map)
+        session[f"bat_{bat_id}"] = [(y, x), False]
+        session["unavailable_locations"].append((y, x))
+
+        new_player_y, new_player_x = get_random_cavern(game_map)
+        session["player"] = (new_player_y, new_player_x)
+        reveal_location(new_player_y, new_player_x)
+
+        if blindfold:
+            hide_location(y, x)
