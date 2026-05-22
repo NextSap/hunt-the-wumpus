@@ -290,3 +290,24 @@ td a {
     flex-direction: column;
     gap: 50px;
 }
+
+#ranking-table {
+    width: 85%;                 /* S'adapte bien dans les 600px du conteneur */
+    border-collapse: collapse;  /* Supprime les doubles bordures */
+    margin-top: 10px;
+    font-size: 18px; /* Un poil plus petit que les 20px du menu pour la hiérarchie */
+    border: none;
+}
+
+#ranking-table td {
+    text-align: center;
+}
+
+.table-wrapper {
+    width: 100%;
+    max-height: 300px;   /* Limite la hauteur pour laisser de la place au titre H1 et aux marges */
+    overflow-y: auto;    /* Active le défilement vertical uniquement si nécessaire */
+    padding-right: 5px;  /* Petit espace pour ne pas coller à la scrollbar */
+    display: flex;
+    justify-content: center;
+}

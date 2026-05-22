@@ -3,3 +3,34 @@
 {% block title %}
 Ranking
 {% endblock %}
+{% block content %}
+<div id="menu-div">
+    <h1>HUNT THE WUMPUS - RANKING</h1>
+    <div class="table-wrapper">
+        <table id="ranking-table">
+            <tr>
+                <th></th>
+                <th>Username</th>
+                <th>Victory</th>
+                <th>Defeat Wumpus</th>
+                <th>Defeat Pit</th>
+                <th>Defeat Arrow</th>
+            </tr>
+            {% for line in ranking %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ line[0] }}</td>
+                <td>{{ line[1] }}</td>
+                <td>{{ line[2] }}</td>
+                <td>{{ line[3] }}</td>
+                <td>{{ line[4] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+<div class="buttons-div">
+    <a class="button" href="/logout">LOG OUT</a>
+    <a class="button" href="/back-menu">BACK TO MENU</a>
+</div>
+{% endblock %}

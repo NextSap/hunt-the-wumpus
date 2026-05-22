@@ -221,7 +221,14 @@ def ranking():
     if session.get("username", -1) == -1:
         return redirect("/login")
 
-    return render_template("ranking.html")
+    connection = db_connect()
+    cursor = connection.cursor()
+    cursor.execute("SELECT username, victory, defeat_wumpus, defeat_pit, defeat_arrow FROM users ORDER BY -victory,defeat_wumpus,defeat_pit,defeat_arrow LIMIT 10")
+    row = cursor.fetchall()
+    cursor.close()
+    connection.close()
+
+    return render_template("ranking.html", ranking=row)
 
 
 @app.route("/debug")
