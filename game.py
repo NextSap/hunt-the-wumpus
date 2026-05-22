@@ -16,6 +16,14 @@ reverse_directions = {
 def reveal_map():
     """Reveal the map entirely"""
 
+    bat_1 = session.get("bat_1", [])
+    bat_2 = session.get("bat_2", [])
+
+    if bat_1:
+        session["bat_1"][1] = True
+    if bat_2:
+        session["bat_2"][1] = True
+
     session["game_map_visibility"] = [
         [1, 1, 1, 1, 1, 1, 1, 1],
         [1, 1, 1, 1, 1, 1, 1, 1],
