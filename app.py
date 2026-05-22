@@ -58,7 +58,7 @@ def register():
         return redirect("/game")
 
     if request.method == "POST":
-        username_input = escape(request.form.get("username", None)).strip().lower()
+        username_input = escape(request.form.get("username", None)).strip()
         username_exp = '^[a-zA-Z0-9]+$'
         password_input = escape(request.form.get("password", None))
         password_exp = '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,50}$'
