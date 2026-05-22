@@ -157,7 +157,7 @@ def room_number(game_map):
     total = 0
     for y in game_map:
         for x in y:
-            if x in [5, 6]:
+            if x in [5, 6]: # the room is a corridor
                 total += 2
             else:
                 total += 1
@@ -167,20 +167,20 @@ def room_number(game_map):
 def get_exits(y, x, game_map, entry):
     """Return the list of possible exits of a specific location"""
 
-    exits = []
-    if game_map[y][x] != 5 and game_map[y][x] != 6:
+    exits = [] # exists will contain object like this ((exit_y, exit_x), enter_by)
+    if game_map[y][x] != 5 and game_map[y][x] != 6: # the room is a cavern -> there are 4 exits
         exits.append((wrap_position(y + 1, x), "UP"))
         exits.append((wrap_position(y - 1, x), "DOWN"))
         exits.append((wrap_position(y, x + 1), "LEFT"))
         exits.append((wrap_position(y, x - 1), "RIGHT"))
-    elif game_map[y][x] == 5:
+    elif game_map[y][x] == 5: # the room is corridor LEFT-UP RIGHT-DOWN
         if entry == "UP" or entry == "LEFT":
             exits.append((wrap_position(y - 1, x), "DOWN"))
             exits.append((wrap_position(y, x - 1), "RIGHT"))
         elif entry == "DOWN" or entry == "RIGHT":
             exits.append((wrap_position(y + 1, x), "UP"))
             exits.append((wrap_position(y, x + 1), "LEFT"))
-    elif game_map[y][x] == 6:
+    elif game_map[y][x] == 6: # the room is corridor RIGHT-UP LEFT-DOWN
         if entry == "UP" or entry == "RIGHT":
             exits.append((wrap_position(y - 1, x), "DOWN"))
             exits.append((wrap_position(y, x + 1), "LEFT"))
@@ -217,6 +217,7 @@ def place_pits(game_map, number_pits=2):
         session["unavailable_locations"].append((y, x))
         game_map[y][x] = 4
 
+        # Color the adjacent caverns
         for direction in directions:
             adjacent_y, adjacent_x = get_adjacent_cavern(y, x, game_map, direction)
             color_cavern(adjacent_y, adjacent_x, game_map, 2)
@@ -263,7 +264,7 @@ def get_adjacent_cavern(y, x, game_map, direction, reveal_path=False):
         y, x = wrap_position(y + dy, x + dx)
 
     while game_map[y][x] not in [0, 1, 2, 3, 4]:
-        if reveal_path:
+        if reveal_path: # used for express mode
             reveal_location(y, x)
 
         new_y, new_x, new_direction = get_corridor_exit(y, x, game_map, reverse_directions[direction])
@@ -323,7 +324,7 @@ def move_player(direction):
         reveal_map()
     """
 
-    if bat_1 and bat_1[0]==(new_y, new_x):
+    if bat_1 and bat_1[0] == (new_y, new_x):
         if not bat_1[1]:
             session["bat_1"] = [(new_y, new_x), True]
         else:
@@ -339,7 +340,7 @@ def move_player(direction):
             if blindfold:
                 hide_location(y, x)
 
-    if bat_2 and bat_2[0]==(new_y, new_x):
+    if bat_2 and bat_2[0] == (new_y, new_x):
         if not bat_2[1]:
             session["bat_2"] = [(new_y, new_x), True]
         else:
